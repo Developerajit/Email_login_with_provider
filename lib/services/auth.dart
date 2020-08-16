@@ -1,6 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:otp_text_field/otp_text_field.dart';
 class User {
   User({@required this.uid,this.photoUrl,this.displayName});
   final String uid;
@@ -16,9 +20,11 @@ abstract class AuthBase {
   Future<String> updateUser(String name);
   Future<void> signOut();
   Future<User> signInGoogle();
+  Future<User> signInWithFacebok();
 }
 
 class Auth implements AuthBase {
+  String phoneNo, smssent, verificationId, sms, errorMessage;
   final _firebaseAuth = FirebaseAuth.instance;
 
   User _userFromFirebase(FirebaseUser user) {
@@ -74,11 +80,32 @@ class Auth implements AuthBase {
       }
     }
   }
+//Facebook
+  @override
+  Future<User> signInWithFacebok() async{
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['public_profile'],);
+    if(result.accessToken != null){
+      final authResult= await _firebaseAuth.signInWithCredential(
+          FacebookAuthProvider.getCredential(
+              accessToken: result.accessToken.token
+          )
+      );
+      return await _userFromFirebase(authResult.user);
+    }else{
+     print('No access token found');
+    }
+  }
 
+                                                //________________Phone_______________________//
+
+  
   @override
   Future<void> signOut() async {
     final gsignin= GoogleSignIn();
     await gsignin.signOut();
+    final facebookLogin= FacebookLogin();
+    await facebookLogin.logOut();
     await _firebaseAuth.signOut();
   }
 }

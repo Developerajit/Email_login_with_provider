@@ -153,6 +153,26 @@ class _SignInState extends State<SignIn> {
                                 ),
                               ),
                             )),
+                            SizedBox(height: 50,),
+                            FadeAnimation(1.6, Container(
+                              height: 70,
+                              width: 300,
+                              margin: EdgeInsets.symmetric(horizontal: 30),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.blueAccent
+                              ),
+                              child: FlatButton(
+                                onPressed:()async{
+                                  await auth.signInWithFacebok().whenComplete(() {
+                                    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                                  });
+                                },
+                                child: Center(
+                                  child: Text("Facebook", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                ),
+                              ),
+                            )),
                           ],
                         ),
                       ),
