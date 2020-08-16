@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 class User {
   User({@required this.uid,this.photoUrl,this.displayName});
   final String uid;
@@ -14,6 +15,7 @@ abstract class AuthBase {
   Future<User> currentUser();
   Future<String> updateUser(String name);
   Future<void> signOut();
+  Future<User> signInGoogle();
 }
 
 class Auth implements AuthBase {
@@ -56,8 +58,27 @@ class Auth implements AuthBase {
     return _userFromFirebase(authResult.user);
   }
 
+
+  //Google
+
+  Future<User> signInGoogle()async{
+    final googleSIgnIn = GoogleSignIn();
+    final account = await googleSIgnIn.signIn();
+    if(account !=null){
+      GoogleSignInAuthentication googleAuth= await account.authentication;
+      if(googleAuth.accessToken !=null && googleAuth.idToken !=null){
+        final result =await _firebaseAuth.signInWithCredential(
+          GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken),
+        );
+        return _userFromFirebase(result.user);
+      }
+    }
+  }
+
   @override
   Future<void> signOut() async {
+    final gsignin= GoogleSignIn();
+    await gsignin.signOut();
     await _firebaseAuth.signOut();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:sastik_manage/MainSection/Dashboard.dart';
 import 'package:sastik_manage/services/SignInPage.dart';
 import 'package:sastik_manage/services/SignUpPage.dart';
 import 'package:sastik_manage/services/auth.dart';
+import 'package:sastik_manage/services/authservice.dart';
 import 'package:sastik_manage/services/loader.dart';
 
 void main() {
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider<AuthBase>(create: (context)=>Auth(),
     child:  MaterialApp(
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
       debugShowCheckedModeBanner: false,
       home: Control(),
       routes: {

@@ -40,6 +40,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     final user=Provider.of<User>(context);
+    final auth= Provider.of<AuthBase>(context,listen: false);
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -133,6 +134,25 @@ class _SignInState extends State<SignIn> {
                               ),
                             )),
                             SizedBox(height: 50,),
+                            FadeAnimation(1.6, Container(
+                              height: 70,
+                              width: 300,
+                              margin: EdgeInsets.symmetric(horizontal: 30),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.redAccent
+                              ),
+                              child: FlatButton(
+                                onPressed:()async{
+                                  await auth.signInGoogle().whenComplete(() {
+                                    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                                  });
+                                },
+                                child: Center(
+                                  child: Text("Google", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                ),
+                              ),
+                            )),
                           ],
                         ),
                       ),
